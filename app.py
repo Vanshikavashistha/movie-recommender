@@ -2,7 +2,7 @@ import pickle
 import streamlit as st
 import requests
 import os
-import gdown
+
 
 
 def fetch_poster(movie_id):
@@ -30,13 +30,17 @@ def recommend(movie):
 st.header('Movie Recommender System')
 movies = pickle.load(open('movie_list.pkl','rb'))
 # similarity = pickle.load(open('similarity.pkl','rb'))
-file_id = "1W7rbmR06rolHuadzC_2cP2gpWYpoh0zN"
-url = f"https://drive.google.com/uc?id={file_id}"
+file_path = "similarity.pkl"
+url = "https://huggingface.co/datasets/vanshikavashistha/movie-recommender-files/resolve/main/similarity.pkl"
 
-if not os.path.exists("similarity.pkl"):
-    gdown.download(url, "similarity.pkl", quiet=False)
+# download only if not exists
+if not os.path.exists(file_path):
+    r = requests.get(url)
+    with open(file_path, "wb") as f:
+        f.write(r.content)
+# load similarity
+similarity = pickle.load(open(file_path, 'rb'))
 
-similarity = pickle.load(open("similarity.pkl", "rb"))
 movie_list = movies['title'].values
 selected_movie = st.selectbox(
     "Type or select a movie from the dropdown",
