@@ -29,15 +29,19 @@ def recommend(movie):
 st.header('Movie Recommender System')
 movies = pickle.load(open('movie_list.pkl','rb'))
 # similarity = pickle.load(open('similarity.pkl','rb'))
-url = "https://drive.google.com/uc?id=1W7rbmR06rolHuadzC_2cP2gpWYpoh0zN"
+url = "https://drive.google.com/uc?export=download&id=1W7rbmR06rolHuadzC_2cP2gpWYpoh0zN"
 
 if not os.path.exists("similarity.pkl"):
     r = requests.get(url)
-    with open("similarity.pkl", "wb") as f:
-        f.write(r.content)
+
+    # DEBUG check
+    if r.status_code != 200:
+        st.error("Download failed")
+    else:
+        with open("similarity.pkl", "wb") as f:
+            f.write(r.content)
 
 similarity = pickle.load(open("similarity.pkl", "rb"))
-
 movie_list = movies['title'].values
 selected_movie = st.selectbox(
     "Type or select a movie from the dropdown",
